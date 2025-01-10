@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 2
     env:
-      URL_CHECKER_TIMEOUT: 30
+      URL_CHECKER_TIMEOUT: 50
     
     steps:
     
@@ -57,7 +57,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run Linters
         run: npm run lint:all
@@ -93,21 +93,18 @@ jobs:
       - name: Cache Node Modules
         uses: actions/cache@v4
         with: 
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('~/.npm') }}
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-node-modules-
       
       - name: Install Dependencies
-        run: |
-          npm ci
-          
-      - name: Set PATH_PREFIX
-        run: |
-          PP="/$(echo "${{ github.repository }}" | cut -d '/' -f2-)/"
-          echo "PATH_PREFIX=$PP" >> $GITHUB_ENV
+        run: npm install
 
-      - name: Build site
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Build the static site for production
         run: |
           npm run prod
 
@@ -136,7 +133,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
         
-      - name: Report status
+      - name: Issue Deployment Status
         run: |
           echo "# Deployment status: ${{ steps.deployment.outcome }}" >> $GITHUB_STEP_SUMMARY
           echo "Deployed ${{ github.ref }} to ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
