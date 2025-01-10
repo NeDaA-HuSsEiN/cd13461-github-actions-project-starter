@@ -91,10 +91,10 @@ jobs:
     needs: build  # Ensure build job is successful before deploying
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Download built site artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: knowledge-base
 
