@@ -115,17 +115,18 @@ jobs:
 
       - name: Authenticate and create deployment status issue
         run: |
-          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
           STATUS="succeeded"
           URL="https://$GITHUB_REPOSITORY.github.io"
           if [ $? -ne 0 ]; then
             STATUS="failed"
           fi
-          
-          # Authenticate with GitHub CLI
-          echo $GITHUB_TOKEN | gh auth login --with-token
-          
+
+          # Authenticate with GitHub CLI (without passing GITHUB_TOKEN directly)
+          gh auth login --with-token < ${GITHUB_TOKEN}
+
+          # Create issue
           gh issue create --title "$(date +'%Y-%m-%d') - Deployment: $STATUS" --body "URL: $URL"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
