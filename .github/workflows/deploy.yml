@@ -121,6 +121,10 @@ jobs:
           if [ $? -ne 0 ]; then
             STATUS="failed"
           fi
+          
+          # Authenticate with GitHub CLI
+          echo $GITHUB_TOKEN | gh auth login --with-token
+          
           gh issue create --title "$(date +'%Y-%m-%d') - Deployment: $STATUS" --body "URL: $URL"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
