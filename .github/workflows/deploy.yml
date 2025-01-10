@@ -15,6 +15,9 @@ on:
       - main
   workflow_dispatch: # Allows manual trigger in case of emergency
 
+permissions:
+  issues: write  # Allow issue creation
+  
 jobs:
   # Job 1: Test
   test:
