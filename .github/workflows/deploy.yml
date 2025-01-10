@@ -121,11 +121,9 @@ jobs:
             STATUS="failed"
           fi
 
-          # Clear the GITHUB_TOKEN environment variable
-          unset GITHUB_TOKEN
           
           # Authenticate with GitHub CLI (without passing GITHUB_TOKEN directly)
-          echo $GITHUB_TOKEN | gh auth login --with-token
+          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
 
           # Create issue
           gh issue create --title "$(date +'%Y-%m-%d') - Deployment: $STATUS" --body "URL: $URL"
