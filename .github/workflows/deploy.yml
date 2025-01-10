@@ -119,10 +119,11 @@ jobs:
       - name: Create Deployment Issue
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_URL: ${{ github.repository_url }}
+          REPO_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
         run: |
-          gh auth login --with-token <<< $GITHUB_TOKEN
+          echo $GITHUB_TOKEN | gh auth login --with-token
           STATUS="succeeded"
-          if [ ${{ job.status }} != "success" ]; then STATUS="failed"; fi
-          gh issue create --title "$(date +'%Y-%m-%d') - Deployment: $STATUS" \
-                          --body "URL: $REPO_URL"
+          if [ "${{ job.status }}" != "success" ]; then STATUS="failed"; fi
+          gh issue create \
+            --title "$(date +'%Y-%m-%d') - Deployment: $STATUS" \
+            --body "URL: $REPO_URL"
