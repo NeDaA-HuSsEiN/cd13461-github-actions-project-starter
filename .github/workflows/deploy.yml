@@ -17,15 +17,10 @@ on:
       - main  
 
   workflow_dispatch: # Allows manual trigger in case of emergency
-    inputs:
-      force_deploy:
-        type: boolean
-        default: false
-        required: true
 
 concurrency:
-  group: pages-group
-  cancel-in-progress: true 
+  group: knowledge-base
+  cancel-in-progress: true # If a new run is triggered while a previous run is still in progress, the previous run should be canceled automatically.
 
 jobs:
   # Job 1: Test
