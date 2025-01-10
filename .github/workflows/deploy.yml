@@ -63,46 +63,54 @@ jobs:
         run: echo "END_TIME=$(date +%s)" >> $GITHUB_ENV
 
   build:
-  runs-on: ubuntu-latest
-  needs: test
-  permissions:
-    contents: read
-    pages: write
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Start Timer
+        id: timer-start
+        run: echo "START_TIME=$(date +%s)" >> $GITHUB_ENV
 
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
-      with:
-        enablement: true
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        with:
+          enablement: true
 
-    - name: Cache Node Modules
-      uses: actions/cache@v3
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-    - name: Install Dependencies
-      run: npm install
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-    - name: Build Static Pages
-      env:
-        PATH_PREFIX: "/${{ github.event.repository.name }}/"
-      run: npm run prod
+      - name: Install Dependencies
+        run: npm install
 
-    - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: built-site
-        path: ./_site
+      - name: Build Static Pages
+        env:
+          PATH_PREFIX: "/${{ github.event.repository.name }}/"
+        run: npm run prod
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: built-site
+          path: ./_site
+
+      - name: End Timer
+        id: timer-end
+        run: echo "END_TIME=$(date +%s)" >> $GITHUB_ENV
 
   deploy:
     runs-on: ubuntu-latest
