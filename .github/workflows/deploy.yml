@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Node.js (version 18+)
         uses: actions/setup-node@v3
@@ -56,7 +56,7 @@ jobs:
     needs: test  # Ensure test job is successful before building
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js (version 18+)
         uses: actions/setup-node@v3
@@ -100,7 +100,7 @@ jobs:
       name: github-pages
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download built site artifact
         uses: actions/download-artifact@v3
