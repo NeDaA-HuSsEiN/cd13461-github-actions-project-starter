@@ -93,7 +93,7 @@ jobs:
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: built-site
+          name: github-pages
           path: ./_site
 
   deploy:
@@ -107,10 +107,12 @@ jobs:
       - name: Download Build Artifacts
         uses: actions/download-artifact@v3
         with:
-          name: built-site
+          name: github-pages
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v2
+        with:
+          artifact_name: github-pages
 
       - name: Create Deployment Issue
         env:
