@@ -121,7 +121,9 @@ jobs:
             STATUS="failed"
           fi
 
-          
+          # Clear the GITHUB_TOKEN from the environment to avoid authentication issues
+          unset GITHUB_TOKEN
+    
           # Authenticate with GitHub CLI (without passing GITHUB_TOKEN directly)
           echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
 
