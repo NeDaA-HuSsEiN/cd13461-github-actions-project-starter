@@ -122,7 +122,7 @@ jobs:
           fi
 
           # Authenticate with GitHub CLI (without passing GITHUB_TOKEN directly)
-          gh auth login --with-token < ${GITHUB_TOKEN}
+          echo $GITHUB_TOKEN | gh auth login --with-token
 
           # Create issue
           gh issue create --title "$(date +'%Y-%m-%d') - Deployment: $STATUS" --body "URL: $URL"
