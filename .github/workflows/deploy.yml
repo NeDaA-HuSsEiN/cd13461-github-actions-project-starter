@@ -1,10 +1,11 @@
-name: Deploy
+name: Deploy Knowledge Base
 
 on:
 
   push:
     branches:
       - main
+    # Ignore changes in specific files
     paths-ignore:
       - '.gitignore'
       - 'README.md'
@@ -15,7 +16,7 @@ on:
     branches:
       - main  
 
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual trigger in case of emergency
     inputs:
       force_deploy:
         type: boolean
@@ -27,7 +28,7 @@ concurrency:
   cancel-in-progress: true 
 
 jobs:
-
+  # Job 1: Test
   test:
   
     runs-on: ubuntu-latest
@@ -42,12 +43,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
+      - name: Setup Node.js (version 18+)
         uses: actions/setup-node@v4
         with: 
           node-version: "18"
       
-      - name: Cache dependencies 
+      - name: Cache Node.js dependencies
         uses: actions/cache@v4
         with: 
           path: ~/.npm
@@ -55,10 +56,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm ci
 
-      - name: Run all linters
+      - name: Run Linters
         run: npm run lint:all
 
       - name: Run scripts
@@ -66,9 +67,10 @@ jobs:
           echo "URL_CHECKER_TIMEOUT=$URL_CHECKER_TIMEOUT"
           node script/url-checker.js -t $URL_CHECKER_TIMEOUT
 
+  # Job 2: Build
   build:
     
-    needs: test
+    needs: test # Ensure test job is successful before building
     runs-on: ubuntu-latest
     timeout-minutes: 2
     
@@ -83,12 +85,12 @@ jobs:
         id: pages
         uses: actions/configure-pages@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js (version 18+)
         uses: actions/setup-node@v4
         with:
           node-version: "18"
 
-      - name: Cache dependencies
+      - name: Cache Node Modules
         uses: actions/cache@v4
         with: 
           path: ~/.npm
@@ -96,7 +98,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           npm ci
           
@@ -109,11 +111,12 @@ jobs:
         run: |
           npm run prod
 
-      - name: Upload artifact
+      - name: Upload built site as artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: "_site"
 
+  # Job 3: Deploy
   deploy:
   
     environment:
